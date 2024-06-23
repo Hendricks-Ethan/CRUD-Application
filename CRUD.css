@@ -1,0 +1,20 @@
+/*  Tags. */
+
+body {
+    background-color: rgb(138, 200, 250);
+}
+
+td {
+    vertical-align: middle;
+}
+
+/*  Class. */
+
+.page-header {
+    text-align: center;
+    font-size: 40px;
+    padding: 10px;
+}
+
+
+/*  ID. */

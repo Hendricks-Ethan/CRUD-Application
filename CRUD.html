@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Manager</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="CRUD.css">
+</head>
+<body>
+
+    <div class="page-header">My Store Inventory</div>
+    <hr>
+
+    <div class="container">
+        <div class="card text-center">
+            <div class="card-header">Add a Category to organize specific Products under.
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-8">
+                            <input type="text" class="form-control" id="category-name" placeholder="Category Name">
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-primary" id="create-category">Create Category</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="container" id="inventory">
+        
+    </div>
+
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="CRUD.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    
+</body>
+</html>
