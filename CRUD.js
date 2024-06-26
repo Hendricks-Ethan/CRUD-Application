@@ -10,8 +10,12 @@ class Category {
 }
 
 class Product {
-    constructor () {
-        this.object = {};
+    constructor (productName, costPerCase, unitsPerCase, casesOnHand, unitsOnHand) {
+        this.productName = productName;
+        this.costPerCase = costPerCase;
+        this.unitsPerCase = unitsPerCase;
+        this.casesOnHand = casesOnHand;
+        this.unitsOnHand = unitsOnHand;
     }
 }
 
@@ -42,7 +46,7 @@ class InventoryService {
             method: "POST",
             dataType: "json",
             contentType: "application/json",
-            data: (categoryData),
+            data: JSON.stringify(categoryData),
         });
    }
 
@@ -52,13 +56,13 @@ class InventoryService {
             method: "PUT",
             dataType: "json",
             contentType: "application/json",
-            data: (updatedData),
+            data: JSON.stringify(updatedData),
         });
    }
 
    static deleteCategory (id) {
         return $.ajax({
-            url: apiUrl + `/${id}`,
+            url: this.apiUrl + `/${id}`,
             method: "DELETE",
             dataType: "json",
             contentType: "application/json",
@@ -97,11 +101,28 @@ class DOMManager {
                     $(`#${category.id}-units-per-case`).val(),
                     $(`#${category.id}-cases-on-hand`).val(),
                     $(`#${category.id}-units-on-hand`).val()));
-                InventoryService.updateCategory(category)
+                InventoryService.updateCategory(id, category)
                     .then(() => {
                         return InventoryService.getAllCategories();
                     })
                     .then((categories) => this.render(categories));
+            }
+        }
+    }
+
+    static deleteProduct(categoryId, productId) {
+        for (let category of this.categories) {
+            if (category.id == categoryId) {
+                for (let product of category.products) {
+                    if (`${product.productName}-product-row` == productId) {
+                        category.products.splice(category.products.indexOf(product), 1);
+                        InventoryService.updateCategory(categoryId, category)
+                            .then(async () => {
+                                const categories = await InventoryService.getAllCategories();
+                                return this.render(categories);   
+                            });
+                    }
+                }
             }
         }
     }
@@ -118,7 +139,7 @@ class DOMManager {
                                 <h2>${category.categoryName}</h2>
                             </div>
                             <div class="col-2">
-                                <button class="btn btn-danger" onclick="DOMManager.deleteCategory("${category.id}")">Delete Category</button>
+                                <button class="btn btn-danger" onclick="DOMManager.deleteCategory('${category.id}')">Delete Category</button>
                             </div>
                         </div>
                     </div>
@@ -142,7 +163,7 @@ class DOMManager {
                             <input type="text" class="form-control" id="${category.id}-units-on-hand" placeholder="Units On Hand">
                         </div>
                         <div class="col text-center">
-                            <button class="btn btn-primary" id="${category.id}-create-product" onclick="DOMManager.createProduct("${category.id}")">Add Product</button>
+                            <button class="btn btn-primary" id="${category.id}-create-product" onclick="DOMManager.addProduct('${category.id}')">Add Product</button>
                         </div>
                     </div>
 
@@ -168,16 +189,15 @@ class DOMManager {
                 `
             );
             for (let product of category.products) {
-                $(`#${category.id}-product-table`).empty();
                 $(`#${category.id}`).find(`#${category.id}-product-table`).append(
-                    `<tr>
+                    `<tr id="${product.productName}-product-row">
                         <td id="product-name-${category.id}">${product.productName}</td>
                         <td id="cost-per-case-${category.id}">${product.costPerCase}</td>
                         <td id="units-per-case-${category.id}">${product.unitsPerCase}</td>
                         <td id="cases-on-hand-${category.id}">${product.casesOnHand}</td>
                         <td id="units-on-hand-${category.id}">${product.unitsOnHand}</td>
                         <td class="text-center">
-                            <button class="btn btn-danger">Delete Product</button>
+                            <button class="btn btn-danger" onclick="DOMManager.deleteProduct('${category.id}', '${product.productName}-product-row')">Delete Product</button>
                         </td>
                     </tr>
                     `
@@ -187,9 +207,9 @@ class DOMManager {
     }
 }
 
-$('#create-category').on("click", () => {
+$('#create-category').on('click', () => {
     DOMManager.createCategory($('#category-name').val());
-    $('#category-name').val("");
+    $('#category-name').val('');
 });
 
 DOMManager.getAllCategories();
