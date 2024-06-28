@@ -1,3 +1,5 @@
+// Category class and it's properties. Along with the push method for each added product.
+
 class Category {
     constructor (categoryName) {
         this.categoryName = categoryName;
@@ -9,6 +11,8 @@ class Category {
     }
 }
 
+// Product class and it's properties.
+
 class Product {
     constructor (productName, costPerCase, unitsPerCase, casesOnHand, unitsOnHand) {
         this.productName = productName;
@@ -18,6 +22,8 @@ class Product {
         this.unitsOnHand = unitsOnHand;
     }
 }
+
+// All the base AJAX requests for easy reuse.
 
 class InventoryService {
     static apiUrl = "https://6674d9dc75872d0e0a97b21a.mockapi.io/api/my_projects/category";
@@ -70,6 +76,8 @@ class InventoryService {
    }
 }
 
+// All the AJAX more specific to each function.
+
 class DOMManager {
     static categories;
 
@@ -93,6 +101,8 @@ class DOMManager {
             .then((categories) => this.render(categories));
     }
 
+// Pushing each new Product into the Products array.
+
     static addProduct(id) {
         for(let category of this.categories) {
             if(category.id == id) {
@@ -109,6 +119,8 @@ class DOMManager {
             }
         }
     }
+
+// Splicing out the selected Product to be deleted by Category Id and its corrisponding Product Row.
 
     static deleteProduct(categoryId, productId) {
         for (let category of this.categories) {
@@ -127,9 +139,14 @@ class DOMManager {
         }
     }
 
+// Base for the dynamically created HTML.
+
     static render(categories) {
         this.categories = categories;
         $('#inventory').empty();
+
+// There is a nested for loop here for each category to render in each added product array.
+
         for (let category of categories) {
             $("#inventory").append(
                 `<div class="card" id="${category.id}">
@@ -207,9 +224,13 @@ class DOMManager {
     }
 }
 
+// Create Category function.
+
 $('#create-category').on('click', () => {
     DOMManager.createCategory($('#category-name').val());
     $('#category-name').val('');
 });
+
+// Rendering the App.
 
 DOMManager.getAllCategories();
